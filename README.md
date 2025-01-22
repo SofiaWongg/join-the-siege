@@ -43,7 +43,7 @@ python -m src.app
 
 ### Classify a single file
 POST /classify_file
-#Request
+### Request
 {
     "file": (File, "path/to/file.pdf")
 }
@@ -53,7 +53,7 @@ example:
 curl -X POST -F 'file=@/Users/sofiawong/Desktop/join-the-siege/files/drivers_license_1.jpg' http://127.0.0.1:5000/classify_file
 ```
 
-#Response
+### Response
 {
     "file_name": "example.pdf",
     "file_type": "invoice",
@@ -75,7 +75,7 @@ example:
 curl -X POST -F 'files[]=@/Users/sofiawong/Desktop/join-the-siege/files/drivers_license_1.jpg' -F 'files[]=@/Users/sofiawong/Desktop/join-the-siege/files/invoice_2.pdf' http://127.0.0.1:5000/classify_files
 ```
 
-#Response
+### Response
 ```
 {
     "processed": 2,
@@ -118,63 +118,63 @@ pytest
 ```
 
 ## Solution Overview
-# Architecture
+### Architecture
 
 
-# Document Extractor:
+### Document Extractor:
 
 Extracts text from PDFs and images
 Processes and cleans extracted text
 
 
-# Document Classifier:
+### Document Classifier:
 
 Uses sentence transformers for document embedding
 Compares document embeddings with reference text embeddings
 Returns document type and confidence score
 
 
-# API Layer:
+### API Layer:
 
 Handles HTTP requests/responses
 Manages error handling and logging
 Provides clear status codes and error messages
 
 ## Improvements
-# Functionality
-Content-based classification - not dependant on filename
-Confidence scoring for better handling of edge cases
+### Functionality
+Content-based classification - not dependant on filename \
+Confidence scoring for better handling of edge cases 
 
-# Scalability
-Organized folder structure (tests, services, models, api)
-Easy industry expansion via config file reference types
-Batch processing capabilities
+### Scalability
+Organized folder structure (tests, services, models, api) \
+Easy industry expansion via config file reference types \
+Batch processing capabilities 
 
-# Maintainability
-Modular architecture for better testing and reuse
-Centralized configuration
-Logging for debugging
+### Maintainability
+Modular architecture for better testing and reuse \
+Centralized configuration \
+Logging for debugging 
 
 ## Future Work
 
-# Features
+### Features
 
-Enhanced text extraction for complex layouts
-NER integration for improved embeddings
-Multi-factor classification (embeddings + keywords + metadata)
-Additional document type support
-Enhanced error handling
-Improved input validation
+Enhanced text extraction for complex layouts \
+NER integration for improved embeddings \
+Multi-factor classification (embeddings + keywords + metadata) \
+Additional document type support \
+Enhanced error handling \
+Improved input validation \
 Extended test coverage
 
 
-# Infrastructure
+### Infrastructure
 
-Docker containerization
-CI/CD pipeline
-Monitoring and alerting
+Docker containerization \
+CI/CD pipeline \
+Monitoring and alerting 
 
-# Performance
+### Performance
 
-Document caching
-Async processing for large files
+Document caching \
+Async processing for large files 
