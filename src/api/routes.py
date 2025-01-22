@@ -57,3 +57,49 @@ def classify_file_route():
     except Exception as e:
         logging.error(f"Unexpected error processing file: {str(e)}")
         return error_response("processing_error")
+    
+@api.route("/classify_files", methods=["POST"])
+def classify_files_route():
+    """Batch process multiple files"""
+    logging.info("Batch classify files route called")
+    try:
+        if "files[]" not in request.files:
+            logging.error("No files in request")
+            return error_response("file_required")
+
+        files = request.files.getlist("files[]")
+        results = []
+
+        # Process each file independently to allow partial success
+        for file in files:
+            try:
+                if file.filename == "" or not is_allowed_file(file.filename):
+                    results.append({
+                        "file_name": file.filename,
+                        "error": "Invalid file type or empty filename"
+                    })
+                    continue
+
+                extractor = Extractor()
+                classifier = DocumentClassifier()
+                doc_info = extractor.process_document(file)
+                response = classifier.classify_document(doc_info)
+                results.append(response.to_dict())
+
+            except Exception as e:
+                logging.error(f"Error processing file {file.filename}: {str(e)}")
+                results.append({
+                    "file_name": file.filename,
+                    "error": str(e)
+                })
+
+        return jsonify({
+            "processed": len(results),
+            "results": results
+        }), 200
+
+    except RequestEntityTooLarge:
+        return error_response("file_too_large")
+    except Exception as e:
+        logging.error(f"Unexpected error in batch processing: {str(e)}")
+        return error_response("processing_error")
