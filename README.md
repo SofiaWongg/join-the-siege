@@ -1,76 +1,180 @@
-# Heron Coding Challenge - File Classifier
+# Document Classifier
 
-## Overview
+A Flask API that classifies documents (PDFs, images) into categories like invoices, bank statements, and driver's licenses using their embeddings.
 
-At Heron, we’re using AI to automate document processing workflows in financial services and beyond. Each day, we handle over 100,000 documents that need to be quickly identified and categorised before we can kick off the automations.
+## Features
 
-This repository provides a basic endpoint for classifying files by their filenames. However, the current classifier has limitations when it comes to handling poorly named files, processing larger volumes, and adapting to new industries effectively.
-
-**Your task**: improve this classifier by adding features and optimisations to handle (1) poorly named files, (2) scaling to new industries, and (3) processing larger volumes of documents.
-
-This is a real-world challenge that allows you to demonstrate your approach to building innovative and scalable AI solutions. We’re excited to see what you come up with! Feel free to take it in any direction you like, but we suggest:
-
-
-### Part 1: Enhancing the Classifier
-
-- What are the limitations in the current classifier that's stopping it from scaling?
-- How might you extend the classifier with additional technologies, capabilities, or features?
-
-
-### Part 2: Productionising the Classifier 
-
-- How can you ensure the classifier is robust and reliable in a production environment?
-- How can you deploy the classifier to make it accessible to other services and users?
-
-We encourage you to be creative! Feel free to use any libraries, tools, services, models or frameworks of your choice
-
-### Possible Ideas / Suggestions
-- Train a classifier to categorize files based on the text content of a file
-- Generate synthetic data to train the classifier on documents from different industries
-- Detect file type and handle other file formats (e.g., Word, Excel)
-- Set up a CI/CD pipeline for automatic testing and deployment
-- Refactor the codebase to make it more maintainable and scalable
-
-## Marking Criteria
-- **Functionality**: Does the classifier work as expected?
-- **Scalability**: Can the classifier scale to new industries and higher volumes?
-- **Maintainability**: Is the codebase well-structured and easy to maintain?
-- **Creativity**: Are there any innovative or creative solutions to the problem?
-- **Testing**: Are there tests to validate the service's functionality?
-- **Deployment**: Is the classifier ready for deployment in a production environment?
-
+- Document text extraction from PDFs and images
+- ML-based document classification
+- Unit & Integration Tests
 
 ## Getting Started
-1. Clone the repository:
-    ```shell
-    git clone <repository_url>
-    cd heron_classifier
-    ```
 
-2. Install dependencies:
-    ```shell
-    python -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    ```
+### Prerequisites
 
-3. Run the Flask app:
-    ```shell
-    python -m src.app
-    ```
+- Python 3.11
+- tesseract-ocr
 
-4. Test the classifier using a tool like curl:
-    ```shell
-    curl -X POST -F 'file=@path_to_pdf.pdf' http://127.0.0.1:5000/classify_file
-    ```
+### Installation
 
-5. Run tests:
-   ```shell
-    pytest
-    ```
+1. Clone the repository
 
-## Submission
+```bash
+git clone https://github.com/SofiaWongg/join-the-siege.git
+```
 
-Please aim to spend 3 hours on this challenge.
+2.Create and activate virtual environment
+```bash
+python3.11 -m venv venv
+source venv/bin/activate
+```
 
-Once completed, submit your solution by sharing a link to your forked repository. Please also provide a brief write-up of your ideas, approach, and any instructions needed to run your solution. 
+3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+4. Run the application
+```bash
+python -m src.app
+```
+
+## Usage
+
+### Classify a single file
+POST /classify_file
+#Request
+{
+    "file": (File, "path/to/file.pdf")
+}
+
+example:
+```bash
+curl -X POST -F 'file=@/Users/sofiawong/Desktop/join-the-siege/files/drivers_license_1.jpg' http://127.0.0.1:5000/classify_file
+```
+
+#Response
+{
+    "file_name": "example.pdf",
+    "file_type": "invoice",
+    "confidence": 0.85,
+    "processed_at": "2025-01-21T10:30:00",
+    "text_content": "extracted text...",
+    "classified_at": "2025-01-21T10:30:01"
+}
+
+### Batch classify multiple files
+POST /classify_files
+#Request
+{
+    "file": (File, "path/to/file.pdf")
+}
+
+example:
+```bash
+curl -X POST -F 'files[]=@/Users/sofiawong/Desktop/join-the-siege/files/drivers_license_1.jpg' -F 'files[]=@/Users/sofiawong/Desktop/join-the-siege/files/invoice_2.pdf' http://127.0.0.1:5000/classify_files
+```
+
+#Response
+```
+{
+    "processed": 2,
+    "results": [
+        {
+            "file_name": "example.pdf",
+            "file_type": "invoice",
+            "confidence": 0.85,
+            "processed_at": "2025-01-21T10:30:00",
+            "text_content": "extracted text...",
+            "classified_at": "2025-01-21T10:30:01"
+        },
+        {
+            "file_name": "example.pdf",
+            "file_type": "drivers_license",
+            "confidence": 0.95,
+            "processed_at": "2025-01-21T10:30:00",
+            "text_content": "extracted text...",
+            "classified_at": "2025-01-21T10:30:01"
+        }
+    ]
+}
+```
+
+## Error Responses
+
+
+400: No file provided
+
+415: Unsupported file type
+
+413: File too large
+
+500: Processing error
+
+## Testing
+Run the tests:
+```bash
+pytest
+```
+
+## Solution Overview
+# Architecture
+
+
+# Document Extractor:
+
+Extracts text from PDFs and images
+Processes and cleans extracted text
+
+
+# Document Classifier:
+
+Uses sentence transformers for document embedding
+Compares document embeddings with reference text embeddings
+Returns document type and confidence score
+
+
+# API Layer:
+
+Handles HTTP requests/responses
+Manages error handling and logging
+Provides clear status codes and error messages
+
+## Improvements
+# Functionality
+Content-based classification - not dependant on filename
+Confidence scoring for better handling of edge cases
+
+# Scalability
+Organized folder structure (tests, services, models, api)
+Easy industry expansion via config file reference types
+Batch processing capabilities
+
+# Maintainability
+Modular architecture for better testing and reuse
+Centralized configuration
+Logging for debugging
+
+## Future Work
+
+# Features
+
+Enhanced text extraction for complex layouts
+NER integration for improved embeddings
+Multi-factor classification (embeddings + keywords + metadata)
+Additional document type support
+Enhanced error handling
+Improved input validation
+Extended test coverage
+
+
+# Infrastructure
+
+Docker containerization
+CI/CD pipeline
+Monitoring and alerting
+
+# Performance
+
+Document caching
+Async processing for large files
